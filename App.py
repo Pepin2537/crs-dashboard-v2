@@ -50,25 +50,30 @@ html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
 }}
 
-.stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {{
+/* 1. KUNCI BACKGROUND UTAMA HALAMAN */
+.stApp, 
+[data-testid="stAppViewContainer"], 
+[data-testid="stMain"],
+section.main {{
     background-color: {COLORS['bg']} !important;
     color: {COLORS['text']} !important;
 }}
 
-/* Streamlit defaultnya kasih padding-top gede banget di atas konten
-   (biasanya ~6rem) -- dikecilin biar header langsung kelihatan pas
-   halaman dibuka, ga ada ruang kosong nganggur di atas. Beberapa
-   selector dituliskan berlapis karena nama data-testid beda-beda
-   antar versi Streamlit. */
+/* 2. BATASI LEBAR AGAR UKURAN KARTU PRESISI SEPERTI DI LOCALHOST */
 div[data-testid="stMain"] .block-container,
 section[data-testid="stMain"] .block-container,
 div[data-testid="stAppViewContainer"] .block-container,
 div[data-testid="stMainBlockContainer"],
 .main .block-container,
 .block-container {{
-    padding-top: 0rem !important;
-    padding-bottom: 2rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 2.5rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
 }}
+
 div[data-testid="stDecoration"] {{
     display: none !important;
     height: 0 !important;
@@ -96,6 +101,7 @@ header[data-testid="stHeader"] {{
     height: 0 !important;
 }}
 
+/* 3. HEADER */
 .dash-header {{
     background: linear-gradient(90deg, {COLORS['navy']} 0%, {COLORS['nusantara_blue']} 100%);
     border-radius: 12px;
@@ -103,7 +109,7 @@ header[data-testid="stHeader"] {{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     box-shadow: 0 4px 14px rgba(1, 42, 94, 0.18);
 }}
 .dash-title {{ font-family: 'Poppins', sans-serif; color: white; text-align: center; flex-grow: 1; }}
@@ -120,16 +126,26 @@ header[data-testid="stHeader"] {{
 }}
 .logo-img {{ height: 56px; object-fit: contain; }}
 
-div[data-testid="stVerticalBlockBorderWrapper"] {{
-    background: {COLORS['card']} !important;
+/* 4. PERBAIKAN UTAMA: SEMUA KARTU/CONTAINER BERWARNA PUTIH TEGAS + SHADOW */
+div[data-testid="stVerticalBlockBorderWrapper"],
+div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stVerticalBlockBorderWrapper"]),
+div[data-testid="stExpander"] {{
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
     border: 1px solid {COLORS['border']} !important;
     border-radius: 14px !important;
-    box-shadow: 0 2px 8px rgba(1, 42, 94, 0.05);
-}}
-div[data-testid="stVerticalBlockBorderWrapper"] > div {{
-    background: transparent !important;
+    box-shadow: 0 4px 14px rgba(1, 42, 94, 0.08) !important;
+    margin-bottom: 10px;
 }}
 
+/* Menjaga elemen internal kartu tetap rapi */
+div[data-testid="stVerticalBlockBorderWrapper"] > div {{
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+}}
+
+/* Judul Section */
 .section-label {{
     font-family: 'Poppins', sans-serif;
     font-size: 13px; font-weight: 600; color: {COLORS['navy']};
@@ -138,6 +154,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] > div {{
 }}
 .section-label .bar {{ width: 4px; height: 14px; background: {COLORS['orange']}; border-radius: 2px; display: inline-block; }}
 
+/* Input Selectbox & Button */
 div[data-baseweb="select"] > div {{
     background-color: #FFFFFF !important;
     border: 1px solid {COLORS['border']} !important;
@@ -159,15 +176,13 @@ button[kind="secondary"]:hover, div[data-testid="stDownloadButton"] button:hover
     border-color: {COLORS['nusantara_blue']} !important;
     color: {COLORS['nusantara_blue']} !important;
 }}
-button[kind="secondary"] p, div[data-testid="stDownloadButton"] button p {{
-    color: inherit !important;
-}}
 
 button[kind="primary"] {{
     background-color: {COLORS['navy']} !important;
     color: white !important;
     border: none !important;
     font-weight: 600 !important;
+    border-radius: 30px !important;
 }}
 button[kind="primary"]:hover {{
     background-color: {COLORS['nusantara_blue']} !important;
@@ -175,8 +190,19 @@ button[kind="primary"]:hover {{
 button[kind="primary"] p {{
     color: white !important;
 }}
-button[kind="primary"], button[kind="secondary"] {{
+
+div[data-testid="stFormSubmitButton"] button {{
+    background-color: {COLORS['navy']} !important;
+    color: white !important;
+    border: none !important;
     border-radius: 30px !important;
+    font-weight: 600 !important;
+}}
+div[data-testid="stFormSubmitButton"] button:hover {{
+    background-color: {COLORS['nusantara_blue']} !important;
+}}
+div[data-testid="stFormSubmitButton"] button p {{
+    color: white !important;
 }}
 
 ul[data-testid="stSelectboxVirtualDropdown"] {{
@@ -194,23 +220,6 @@ ul[data-testid="stSelectboxVirtualDropdown"] li:hover {{
 ul[data-testid="stSelectboxVirtualDropdown"] li[aria-selected="true"] {{
     background-color: {COLORS['nusantara_blue']} !important;
 }}
-
-/* Tombol submit form (misal "Terapkan Posisi Data & Filter", "Update
-   Database") default-nya Streamlit kasih warna merah -- CSS ini nimpa
-   jadi biru navy, konsisten sama tombol lain di dashboard. */
-div[data-testid="stFormSubmitButton"] button {{
-    background-color: {COLORS['navy']} !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 30px !important;
-    font-weight: 600 !important;
-}}
-div[data-testid="stFormSubmitButton"] button p {{
-    color: white !important;
-}}
-div[data-testid="stFormSubmitButton"] button:hover {{
-    background-color: {COLORS['nusantara_blue']} !important;
-}}
 ul[data-testid="stSelectboxVirtualDropdown"] li[aria-selected="true"] * {{
     color: #FFFFFF !important;
 }}
@@ -225,11 +234,11 @@ label[data-testid="stWidgetLabel"] p {{
     text-align: center; width: 100%;
 }}
 
-/* st.caption() -- dipaksa hitam biar keliatan (default-nya suka kebaca putih/ke-samarin) */
 [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {{
     color: #000000 !important;
 }}
 
+/* Tabel CRS */
 .crs-table {{ width: 100%; border-collapse: collapse; font-size: 13.5px; }}
 .crs-table th {{
     text-align: right; color: {COLORS['text_muted']}; font-size: 11px;
@@ -245,105 +254,47 @@ label[data-testid="stWidgetLabel"] p {{
     background: #FDEDED; color: #9A1E22; font-weight: 600;
 }}
 
-.kpi-card {{
-    border-left: 5px solid {COLORS['nusantara_blue']};
-    border-radius: 10px; padding: 4px 4px 4px 14px;
-}}
-.kpi-card.orange {{ border-left-color: {COLORS['orange']}; }}
-.kpi-label {{ font-size: 12px; font-weight: 600; color: {COLORS['text_muted']}; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }}
-.kpi-value {{ font-family: 'Poppins', sans-serif; font-size: 30px; font-weight: 700; color: {COLORS['navy']}; }}
-.kpi-note {{ font-size: 11.5px; color: {COLORS['text_muted']}; margin-top: 6px; line-height: 1.4; }}
-
-/* Card KPI versi "penuh" (buat kolom Model Performance yang ditumpuk
-   atas-bawah di samping grafik) -- dikasih background/border sendiri
-   biar keliatan seimbang tingginya sama card grafik di sebelahnya. */
+/* KPI Card */
 .kpi-card-full {{
-    background:#FFFFFF;
-    border:1px solid {COLORS['border']};
+    background: #FFFFFF;
+    border: 1px solid {COLORS['border']};
     border-left: 5px solid {COLORS['nusantara_blue']};
     border-radius: 12px;
     padding: 16px 16px 16px 18px;
     box-shadow: 0 2px 8px rgba(1,42,94,0.05);
 }}
 .kpi-card-full.orange {{ border-left-color: {COLORS['orange']}; }}
+.kpi-label {{ font-size: 12px; font-weight: 600; color: {COLORS['text_muted']}; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }}
+.kpi-value {{ font-family: 'Poppins', sans-serif; font-size: 30px; font-weight: 700; color: {COLORS['navy']}; }}
+.kpi-note {{ font-size: 11.5px; color: {COLORS['text_muted']}; margin-top: 6px; line-height: 1.4; }}
 
-/* ============================================================
-   ROW ALIGNMENT
-   Parent row controls the two cards. No hidden marker is used,
-   so the title starts at exactly the same vertical position.
-   ============================================================ */
-
-/* Sebaran Risk Grade + Chart */
-div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] {{
-    align-items: stretch !important;
-}}
-
-div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {{
-    display: flex !important;
-    flex-direction: column !important;
-}}
-
-div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div {{
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-}}
-
-/* Card putih (border wrapper) di dalam kolom ikut di-stretch penuh --
-   ini yang bikin kotaknya beneran nyambung ke bawah (satu shape utuh),
-   bukan cuma wrapper transparannya doang yang manjang sementara card-nya
-   nyisain celah kosong di bawah. */
-div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] div[data-testid="stVerticalBlockBorderWrapper"] {{
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-}}
-div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] div[data-testid="stVerticalBlockBorderWrapper"] > div {{
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-}}
-
-/* Model Performance + Bad Rate */
+/* ROW ALIGNMENT & STRETCH */
+div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"],
 div[class*="st-key-model_performance_row"] > div[data-testid="stHorizontalBlock"] {{
     align-items: stretch !important;
 }}
 
+div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
 div[class*="st-key-model_performance_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {{
     display: flex !important;
     flex-direction: column !important;
 }}
 
+div[class*="st-key-risk_grade_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div,
 div[class*="st-key-model_performance_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div {{
     flex: 1 1 auto !important;
     display: flex !important;
     flex-direction: column !important;
 }}
 
-/* Card putih (border wrapper) di dalam kolom ikut di-stretch penuh,
-   sama kayak row Sebaran Risk Grade di atas. */
-div[class*="st-key-model_performance_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] div[data-testid="stVerticalBlockBorderWrapper"] {{
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-}}
-div[class*="st-key-model_performance_row"] > div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] div[data-testid="stVerticalBlockBorderWrapper"] > div {{
+div[class*="st-key-risk_grade_row"] div[data-testid="stVerticalBlockBorderWrapper"],
+div[class*="st-key-model_performance_row"] div[data-testid="stVerticalBlockBorderWrapper"] {{
     flex: 1 1 auto !important;
     display: flex !important;
     flex-direction: column !important;
     height: 100% !important;
 }}
 
-/* Spacer -- dorong tombol download/logout ke PALING BAWAH masing-masing
-   card (jadi sejajar antar card dalam 1 row), tanpa nambah shape ekstra:
-   spacer ini nempel jadi flex item di dalam stVerticalBlock yang SUDAH
-   flex-column (lewat CSS di atas), jadi cuma nyerep sisa ruang kosong.
-   min-height:0 dikasih biar flex item ini beneran mau NGECIL ke ukuran
-   konten aslinya (span invisible) sebelum ke-grow, bukan maksa ukuran
-   auto/konten minimal. */
 div[data-testid="stElementContainer"]:has(#table-dl-spacer),
 div[data-testid="stElementContainer"]:has(#chart-dl-spacer),
 div[data-testid="stElementContainer"]:has(#perf-bottom-spacer),
@@ -352,11 +303,7 @@ div[data-testid="stElementContainer"]:has(#badrate-dl-spacer) {{
     min-height: 0 !important;
 }}
 
-/* st.spinner() DIUBAH jadi overlay FULL-SCREEN -- nutupin seluruh layar
-   pakai latar gelap transparan, ikon loading & teksnya dibesarin dan
-   diposisiin di tengah layar. Munculnya otomatis pas st.spinner() aktif
-   (misal pas proses Terapkan Posisi Data & Filter), ilang lagi begitu
-   proses selesai. */
+/* SPINNER OVERLAY */
 div[data-testid="stSpinner"] {{
     position: fixed !important;
     top: 0 !important; left: 0 !important;
